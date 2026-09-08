@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+
+<html class="scroll-smooth" lang="en"><head>
+<meta charset="utf-8"/><meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>Ian the Barber — Home Barber in Canggu, Bali</title>
+<meta content="Home barber in Canggu, Bali. Ian comes to your villa for fades, scissor cuts and beard trims." name="description"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link crossorigin="" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" rel="stylesheet"/>
+<script crossorigin="" src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<style>
+:root{--wa:#25D366}.reveal{opacity:0;transform:translateY(24px);transition:opacity .85s cubic-bezier(.16,1,.3,1),transform .85s cubic-bezier(.16,1,.3,1)}.reveal.visible{opacity:1;transform:none}.img-hover img{transition:transform .9s cubic-bezier(.16,1,.3,1)}.img-hover:hover img{transform:scale(1.045)}.hero-image{animation:heroZoom 18s ease-in-out infinite alternate}@keyframes heroZoom{from{transform:scale(1)}to{transform:scale(1.055)}}.nav-scrolled{background:rgba(251,251,250,.92);backdrop-filter:blur(14px);box-shadow:0 1px 0 rgba(0,0,0,.08)}.nav-hidden{transform:translateY(-110%)}.wa{background:var(--wa);color:#071d0d}.wa:hover{background:#20bb58}.line-link{position:relative}.line-link:after{content:"";position:absolute;left:0;right:0;bottom:-4px;height:1px;background:currentColor;transform:scaleX(0);transform-origin:left;transition:transform .3s}.line-link:hover:after{transform:scaleX(1)}@media(prefers-reduced-motion:reduce){.reveal,.hero-image{animation:none!important;transition:none!important;transform:none!important;opacity:1!important}}
+.lang-switch{display:flex;align-items:center;gap:6px;font-size:10px;letter-spacing:.20em;color:#8a8a8a;line-height:1}.lang-switch button{border:0;background:transparent;padding:2px 0;font:inherit;letter-spacing:inherit;color:inherit;cursor:pointer;transition:color .2s,opacity .2s}.lang-switch button:hover{color:#111}.lang-switch button[aria-pressed="true"]{color:#111;font-weight:700}.lang-switch span{color:#c5c5c5}@media(max-width:639px){.lang-switch{font-size:9px;letter-spacing:.16em}.lang-switch button{padding:3px 0}}
+.map-shell{position:relative;overflow:hidden;border:1px solid rgba(0,0,0,.1);background:#e9ece8;box-shadow:0 24px 70px rgba(0,0,0,.10);border-radius:28px}.map-shell:after{content:"";position:absolute;inset:0;pointer-events:none;border:1px solid rgba(255,255,255,.45);border-radius:28px;box-shadow:inset 0 0 0 1px rgba(0,0,0,.03)}#barber-map{height:clamp(340px,46vw,620px);filter:saturate(.82) contrast(.96)}.leaflet-control-zoom{border:0!important;box-shadow:0 8px 24px rgba(0,0,0,.16)!important;border-radius:16px!important;overflow:hidden}.leaflet-control-zoom a{width:38px!important;height:38px!important;line-height:38px!important;border:0!important;background:rgba(255,255,255,.94)!important;color:#111!important}.leaflet-control-attribution{font-size:8px!important;background:rgba(255,255,255,.78)!important;border-radius:10px 0 0 0!important;padding:2px 6px!important}.map-float{position:absolute;z-index:500;left:18px;top:18px;display:flex;align-items:center;gap:10px;border:1px solid rgba(0,0,0,.08);background:rgba(255,255,255,.92);backdrop-filter:blur(16px);border-radius:18px;padding:10px 13px;box-shadow:0 10px 30px rgba(0,0,0,.11)}.map-float-dot{width:9px;height:9px;border-radius:50%;background:#0a84ff;box-shadow:0 0 0 5px rgba(10,132,255,.15)}.map-locate{position:absolute;z-index:500;right:18px;top:18px;width:42px;height:42px;border-radius:50%;border:1px solid rgba(0,0,0,.08);background:rgba(255,255,255,.92);backdrop-filter:blur(16px);box-shadow:0 10px 30px rgba(0,0,0,.11);display:grid;place-items:center;cursor:pointer}.map-locate span{font-size:20px}.map-info{display:grid;gap:4px}.map-info strong{font-size:12px}.map-info small{font-size:10px;color:#6b6b6b}.map-pin{width:18px;height:18px;border-radius:50% 50% 50% 0;background:#111;transform:rotate(-45deg);border:3px solid white;box-shadow:0 4px 12px rgba(0,0,0,.2)}.map-pin:after{content:"";display:block;width:5px;height:5px;border-radius:50%;background:#fff;margin:3px}
+.barber-tooltip{border:0;background:rgba(255,255,255,.92);color:#111;border-radius:12px;box-shadow:0 8px 22px rgba(0,0,0,.12);font-size:10px;padding:5px 8px}.barber-tooltip:before{display:none}
+/* Empty / unavailable media fallback: keep the layout filled with a clean grey frame. */
+.img-hover, #work article > div:first-child, #services article .img-hover, #about .img-hover, .map-shell, .map-frame, .media-frame { background:#ecebe8; }
+.img-hover:has(img), #work article > div:first-child, #services article .img-hover, #about .img-hover { min-height:0; }
+.img-hover img, #work article img, #services article img, #about img { background:#ecebe8; }
+.media-empty { display:grid; place-items:center; background:#ecebe8; color:#a1a1a1; }
+.media-empty span { font-size:9px; letter-spacing:.24em; text-transform:uppercase; }
+
+
+/* Clean profile framing */
+#about .img-hover { border-radius: 0; }
+@media (max-width: 1023px){ #about .img-hover { max-width: 430px; } }
+
+/* V5 clean compact responsive system */
+@media (max-width: 639px){
+  #work .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+  #work article .mt-4{margin-top:10px}
+  #work article .mt-1{display:none}
+  #work article .text-[11px]{font-size:10px}
+  #services .grid.gap-6{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  #services article .grid{display:block}
+  #services article img{min-height:0!important;aspect-ratio:4/3;height:auto}
+  #services article > div > div:last-child{padding:14px}
+  #services article h3{margin-top:22px;font-size:17px}
+  #services article .mt-8{margin-top:16px}
+  #about .img-hover{max-width:320px}
+  .reviews-grid,.how-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .reviews-grid article{padding:18px}
+  .reviews-grid blockquote{margin-top:16px;font-size:13px;line-height:1.55}
+  .reviews-grid p{margin-top:14px}
+  .how-grid article{padding:18px!important}
+  .how-grid article p{display:none}
+  .compact-checks{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .compact-checks article{padding:18px}
+  .compact-checks article h3{margin-top:20px}
+  .compact-checks article > p:nth-of-type(2){font-size:12px;line-height:1.55;margin-top:10px}
+  .compact-checks article .mt-7{margin-top:14px}
+  .map-shell{border-radius:22px}
+  #barber-map{height:280px}
+}
+@media (min-width:640px) and (max-width:1023px){
+  #work .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  #services .grid.gap-6{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:639px){
+  .hero-image{animation-duration:24s}
+  .map-float{left:12px;top:12px}
+  .map-locate{right:12px;top:12px}
+}
+@media (prefers-reduced-motion:reduce){
+  #top-nav{transition:none!important}
+}
+
+/* Booking picker */
+.booking-modal{position:fixed;inset:0;z-index:2100;display:grid;place-items:center;padding:20px;background:rgba(0,0,0,.42);backdrop-filter:blur(8px);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .24s ease,visibility .24s ease}
+.booking-modal.is-open{opacity:1;visibility:visible;pointer-events:auto}
+.booking-card{width:min(620px,100%);max-height:min(720px,calc(100dvh - 40px));overflow:auto;border:1px solid rgba(0,0,0,.10);border-radius:22px;background:#fff;color:#111;box-shadow:0 30px 90px rgba(0,0,0,.22);transform:translateY(14px) scale(.985);transition:transform .3s cubic-bezier(.16,1,.3,1)}
+.booking-modal.is-open .booking-card{transform:none}
+.booking-head{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;padding:24px 24px 8px}
+.booking-kicker{margin:0;color:#777;font-size:9px;font-weight:700;letter-spacing:.28em;text-transform:uppercase}
+.booking-title{margin:8px 0 0;font-size:clamp(1.6rem,4vw,2.35rem);line-height:1.02;letter-spacing:-.055em;font-weight:600}
+.booking-close{display:grid;place-items:center;width:38px;height:38px;flex:none;border:1px solid rgba(0,0,0,.10);border-radius:50%;background:#fff;color:#111;font-size:20px;line-height:1;cursor:pointer;transition:background .2s,color .2s,transform .2s}
+.booking-close:hover{background:#111;color:#fff;transform:rotate(6deg)}
+.booking-sub{margin:0;padding:0 24px 18px;color:#6b6b6b;font-size:13px;line-height:1.6}
+.booking-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding:0 24px}
+.booking-option{display:flex;min-width:0;align-items:flex-start;justify-content:space-between;gap:12px;padding:16px;border:1px solid rgba(0,0,0,.10);border-radius:16px;background:#fff;color:#111;text-align:left;cursor:pointer;transition:border-color .2s,background .2s,transform .2s,box-shadow .2s}
+.booking-option:hover{border-color:#111;transform:translateY(-1px)}
+.booking-option.is-selected{border-color:#111;background:#f5f5f3;box-shadow:inset 0 0 0 1px #111}
+.booking-option-body{display:grid;gap:7px;min-width:0}
+.booking-option-name{font-size:13px;font-weight:600;line-height:1.2;letter-spacing:-.01em}
+.booking-option-price{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:#777}
+.booking-option-check{display:grid;place-items:center;width:22px;height:22px;flex:none;border:1px solid rgba(0,0,0,.18);border-radius:50%;font-size:12px;font-weight:700;color:transparent;transition:background .2s,color .2s,border-color .2s}
+.booking-option.is-selected .booking-option-check{background:#111;color:#fff;border-color:#111}
+.booking-foot{padding:20px 24px 24px}
+.booking-note{margin:0 0 12px;color:#777;font-size:10px;line-height:1.5}
+.booking-continue{display:flex;width:100%;align-items:center;justify-content:center;gap:10px;min-height:50px;border:0;border-radius:999px;background:var(--wa);color:#071d0d;padding:0 18px;font-size:10px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;transition:transform .2s,background .2s,opacity .2s}
+.booking-continue:hover{transform:translateY(-1px);background:#20bb58}
+.booking-continue:disabled{opacity:.45;cursor:not-allowed;transform:none}
+@media(max-width:639px){.booking-modal{padding:12px}.booking-card{max-height:calc(100dvh - 24px);border-radius:18px}.booking-head{padding:20px 18px 8px}.booking-sub{padding:0 18px 15px}.booking-options{gap:8px;padding:0 18px}.booking-option{padding:13px;border-radius:13px}.booking-option-name{font-size:12px}.booking-foot{padding:16px 18px 18px}}
+@media(prefers-reduced-motion:reduce){.booking-modal,.booking-card,.booking-option,.booking-close,.booking-continue{transition:none!important}}
+
+/* V10 — editorial clean system: remove template-like card boxes globally. */
+.why-feature-grid,
+.services-grid-clean,
+.reviews-grid-clean,
+.how-grid-clean,
+.checks-grid-clean{
+  display:grid;
+}
+.why-feature-grid{
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:0;
+  align-items:stretch;
+}
+.why-feature-item{
+  min-height:160px;
+  display:grid;
+  place-items:center;
+  padding:28px 30px;
+  text-align:center;
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+}
+.why-feature-item + .why-feature-item{
+  border-left:1px solid rgba(255,255,255,.16)!important;
+}
+.why-feature-content{display:grid!important;gap:14px;justify-items:center!important;align-items:center!important;}
+.why-feature-number{display:block!important;margin:0!important;font-size:9px!important;letter-spacing:.24em;color:rgba(255,255,255,.35)!important;}
+.why-feature-body{display:block!important;min-width:0!important;}
+.why-feature-body h3{margin:0!important;font-size:clamp(1rem,1.4vw,1.25rem)!important;font-weight:500!important;}
+
+.services-grid-clean{
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:clamp(34px,5vw,72px) clamp(20px,4vw,54px);
+}
+.service-item{
+  border:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+.service-item:hover{border:0!important;box-shadow:none!important;}
+.service-item-inner{display:grid!important;gap:0!important;background:transparent!important;}
+.service-item-media{background:#ecebe8!important;border:0!important;}
+.service-item-info{padding:22px 0 0!important;background:transparent!important;}
+.service-item-info .line-link{margin-top:18px!important;}
+
+.reviews-grid-clean{
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:clamp(24px,4vw,56px);
+}
+.review-item{
+  background:transparent!important;
+  padding:0!important;
+  border:0!important;
+  box-shadow:none!important;
+  min-width:0;
+}
+.review-item blockquote{margin-top:18px!important;max-width:34ch;}
+.review-item p{margin-top:18px!important;}
+
+.how-grid-clean{
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:0;
+  border-top:1px solid rgba(255,255,255,.15);
+  border-bottom:1px solid rgba(255,255,255,.15);
+}
+.how-item{
+  background:transparent!important;
+  padding:28px 24px!important;
+  border:0!important;
+  box-shadow:none!important;
+}
+.how-item:nth-child(odd){border-right:1px solid rgba(255,255,255,.15)!important;}
+.how-item:nth-child(n+3){border-top:1px solid rgba(255,255,255,.15)!important;}
+.how-item h3{margin:0!important;}
+
+.checks-grid-clean{
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:0;
+  border-top:1px solid rgba(0,0,0,.10);
+  border-bottom:1px solid rgba(0,0,0,.10);
+}
+.check-item{
+  background:transparent!important;
+  padding:30px 28px!important;
+  border:0!important;
+  box-shadow:none!important;
+}
+.check-item + .check-item{border-left:1px solid rgba(0,0,0,.10)!important;}
+.check-item h3{margin-top:24px!important;}
+
+.map-area-stats{
+  display:flex!important;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:14px 22px;
+  margin-top:28px!important;
+  max-width:520px;
+  border:0!important;
+  background:transparent!important;
+}
+.map-area-stat{
+  padding:0!important;
+  background:transparent!important;
+  border:0!important;
+}
+.map-area-stat + .map-area-stat{border-left:1px solid rgba(0,0,0,.15)!important;padding-left:22px!important;}
+
+/* Keep images natural and remove only decorative card framing. */
+.services-grid-clean .img-hover:hover img,
+.why-feature-grid .img-hover:hover img,
+.reviews-grid-clean .img-hover:hover img,
+.checks-grid-clean .img-hover:hover img{transform:none;}
+
+@media(max-width:1023px){
+  .why-feature-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
+  .why-feature-item:nth-child(3){grid-column:1/-1;max-width:280px;justify-self:center;width:100%;}
+  .why-feature-item:nth-child(2){border-left:1px solid rgba(255,255,255,.16)!important;}
+  .why-feature-item:nth-child(3){border-left:0!important;border-top:1px solid rgba(255,255,255,.16)!important;}
+  .reviews-grid-clean{grid-template-columns:repeat(2,minmax(0,1fr));gap:28px 22px;}
+  .review-item:nth-child(3){grid-column:1/-1;max-width:430px;justify-self:center;width:100%;}
+  .checks-grid-clean{grid-template-columns:repeat(2,minmax(0,1fr));}
+  .check-item:nth-child(3){grid-column:1/-1;max-width:520px;justify-self:center;width:100%;border-left:0!important;border-top:1px solid rgba(0,0,0,.10)!important;}
+}
+@media(max-width:639px){
+  .why-feature-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
+  .why-feature-item{min-height:138px;padding:22px 14px;}
+  .why-feature-body h3{font-size:15px!important;}
+  .why-feature-item:nth-child(2){border-left:1px solid rgba(255,255,255,.14)!important;}
+  .why-feature-item:nth-child(3){grid-column:1/-1;border-left:0!important;border-top:1px solid rgba(255,255,255,.14)!important;}
+  .services-grid-clean{grid-template-columns:repeat(2,minmax(0,1fr));gap:30px 12px;}
+  .service-item-media{aspect-ratio:4/3;overflow:hidden;}
+  .service-item-info{padding-top:14px!important;}
+  .service-item-info .text-xl{font-size:16px!important;}
+  .reviews-grid-clean{grid-template-columns:repeat(2,minmax(0,1fr));gap:24px 14px;}
+  .review-item:nth-child(3){grid-column:1/-1;max-width:none;}
+  .review-item blockquote{font-size:12.5px!important;line-height:1.5!important;}
+  .how-grid-clean{grid-template-columns:repeat(2,minmax(0,1fr));}
+  .how-item{padding:20px 14px!important;}
+  .how-item:nth-child(odd){border-right:1px solid rgba(255,255,255,.14)!important;}
+  .checks-grid-clean{grid-template-columns:repeat(2,minmax(0,1fr));}
+  .check-item{padding:22px 14px!important;}
+  .check-item:nth-child(3){grid-column:1/-1;}
+  .map-area-stats{gap:10px 14px;}
+  .map-area-stat + .map-area-stat{padding-left:14px!important;}
+}
+</style>
+<style>
+#work article > div:first-child { aspect-ratio:4/5; overflow:hidden; }
+#services article .img-hover { aspect-ratio:4/3; overflow:hidden; }
+#about .img-hover { aspect-ratio:3/4; overflow:hidden; }
+#work article > div:first-child img, #services article .img-hover img, #about .img-hover img { height:100%; width:100%; object-fit:cover; }
+@media (max-width:639px){
+  #work article > div:first-child { aspect-ratio:4/5; }
+  #services article .img-hover { aspect-ratio:4/3; }
+  #about .img-hover { max-width:320px; margin-inline:auto; }
+}
+</style>
+<script>tailwind.config={theme:{extend:{colors:{surface:"#fbfbfa",ink:"#111111",muted:"#6b6b6b"},fontFamily:{sans:['"Petrov Sans"','"Plus Jakarta Sans"','Arial','sans-serif']},spacing:{edge:"clamp(1rem,4vw,4rem)",section:"clamp(4rem,10vw,10rem)"},boxShadow:{soft:"0 24px 80px rgba(0,0,0,.12)"}}}};</script>
+</head>
+<body class="overflow-x-hidden bg-surface font-sans text-ink selection:bg-black selection:text-white" data-design-version="v10-clean-editorial">
+<nav class="fixed inset-x-0 top-0 z-50 transition-all duration-500" id="top-nav"><div class="mx-auto flex max-w-[1440px] items-center justify-between px-edge py-4 md:py-5">
+<a class="text-[1.2rem] font-semibold tracking-[-.05em] sm:text-[1.55rem]" href="#home">IAN THE BARBER</a>
+<div class="hidden items-center gap-8 text-[10px] uppercase tracking-[.28em] md:flex"><a class="text-muted hover:text-black" href="#work">Work</a><a class="text-muted hover:text-black" href="#services">Services</a><a class="text-muted hover:text-black" href="#about">About</a><a class="text-muted hover:text-black" href="#contact">Contact</a></div>
+<div class="flex items-center gap-3"><div aria-label="Language" class="lang-switch"><button aria-pressed="true" data-lang-btn="en" type="button">EN</button><span aria-hidden="true">/</span><button aria-pressed="false" data-lang-btn="id" type="button">ID</button></div><a class="wa inline-flex items-center gap-2 rounded-full px-4 py-2.5 text-[10px] font-semibold uppercase tracking-[.18em] transition" data-booking="true" href="https://wa.me/6283805877791">WhatsApp</a></div></div>
+<div class="flex gap-5 overflow-x-auto px-edge pb-3 text-[10px] uppercase tracking-[.25em] md:hidden"><a class="shrink-0 text-muted" href="#work">Work</a><a class="shrink-0 text-muted" href="#services">Services</a><a class="shrink-0 text-muted" href="#about">About</a><a class="shrink-0 text-muted" href="#contact">Contact</a></div></nav>
+<main id="home">
+<section class="mx-auto flex min-h-[92svh] max-w-[1440px] flex-col justify-end px-edge pb-8 pt-32 sm:pb-12"><div class="reveal max-w-4xl"><p class="mb-5 text-[10px] uppercase tracking-[.35em] text-muted">Home barber · Canggu, Bali</p><h1 class="text-[clamp(3.2rem,10vw,8.4rem)] font-semibold leading-[.9] tracking-[-.075em]">A fresh cut.<br/><span class="text-black/35">I come to you.</span></h1></div>
+<div class="mt-10 grid gap-8 lg:grid-cols-[1.15fr_.85fr] lg:items-end"><div class="img-hover reveal overflow-hidden bg-black"><img alt="Ian the Barber" class="hero-image h-[52svh] min-h-[380px] w-full object-cover sm:h-[58svh]" src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&amp;fit=crop&amp;w=1800&amp;q=85"/></div><div class="reveal max-w-md pb-2 lg:pb-4"><p class="text-[15px] leading-7 text-muted">Home barber for fades, scissor cuts and beards — at your villa.</p><a class="mt-7 inline-flex items-center gap-3 bg-black px-7 py-4 text-[11px] font-semibold uppercase tracking-[.25em] text-white transition hover:bg-white hover:text-black hover:ring-1 hover:ring-black" data-booking="true" href="https://wa.me/6283805877791">Book on WhatsApp →</a><div class="mt-6 flex gap-3 text-[10px] uppercase tracking-[.24em] text-muted"><span>★★★★★</span><span>5.0 on Fresha</span></div></div></div></section>
+<section class="mx-auto max-w-[1440px] px-edge py-section" id="work"><div class="mb-14 flex flex-col gap-5 md:flex-row md:items-end md:justify-between"><div class="reveal"><p class="text-[10px] uppercase tracking-[.35em] text-muted">01 / Recent work</p><h2 class="mt-4 text-4xl font-medium tracking-[-.06em] sm:text-5xl md:text-6xl">Cut clean.<br/>Keep it natural.</h2></div></div><div class="grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-3"><article class="img-hover reveal overflow-hidden"><div class="overflow-hidden bg-[#ecebe8]"><img alt="Skin fade with a textured top" class="aspect-[4/5] w-full object-cover" src="https://ian-the-barber.eliasgerbeth.com/img/cut-fade.jpg"/></div><div class="mt-4 flex items-center justify-between"><div><p class="text-[10px] uppercase tracking-[.28em] text-muted">SKIN FADE</p></div><span class="text-[11px] text-muted">→</span></div></article><article class="img-hover reveal overflow-hidden"><div class="overflow-hidden bg-[#ecebe8]"><img alt="Classic cut, skin fade and a beard tidy" class="aspect-[4/5] w-full object-cover" src="https://ian-the-barber.eliasgerbeth.com/img/cut-fade-beard.jpg"/></div><div class="mt-4 flex items-center justify-between"><div><p class="text-[10px] uppercase tracking-[.28em] text-muted">CLASSIC CUT</p></div><span class="text-[11px] text-muted">→</span></div></article><article class="img-hover reveal overflow-hidden"><div class="overflow-hidden bg-[#ecebe8]"><img alt="Short crop with a sharp beard line" class="aspect-[4/5] w-full object-cover" src="https://ian-the-barber.eliasgerbeth.com/img/ba-classic-after.jpg"/></div><div class="mt-4 flex items-center justify-between"><div><p class="text-[10px] uppercase tracking-[.28em] text-muted">BEARD</p></div><span class="text-[11px] text-muted">→</span></div></article><article class="img-hover reveal overflow-hidden"><div class="overflow-hidden bg-[#ecebe8]"><img alt="Textured crop on fine, blond hair" class="aspect-[4/5] w-full object-cover" src="https://ian-the-barber.eliasgerbeth.com/img/cut-crop.jpg"/></div><div class="mt-4 flex items-center justify-between"><div><p class="text-[10px] uppercase tracking-[.28em] text-muted">TEXTURED CROP</p></div><span class="text-[11px] text-muted">→</span></div></article><article class="img-hover reveal overflow-hidden"><div class="overflow-hidden bg-[#ecebe8]"><img alt="Longer on top with natural movement" class="aspect-[4/5] w-full object-cover" src="https://ian-the-barber.eliasgerbeth.com/img/cut-longer.jpg"/></div><div class="mt-4 flex items-center justify-between"><div><p class="text-[10px] uppercase tracking-[.28em] text-muted">LONGER ON TOP</p></div><span class="text-[11px] text-muted">→</span></div></article><article class="img-hover reveal overflow-hidden"><div class="overflow-hidden bg-[#ecebe8]"><img alt="High skin fade into the beard" class="aspect-[4/5] w-full object-cover" src="https://ian-the-barber.eliasgerbeth.com/img/ba-fade-after.jpg"/></div><div class="mt-4 flex items-center justify-between"><div><p class="text-[10px] uppercase tracking-[.28em] text-muted">FADE + BEARD</p></div><span class="text-[11px] text-muted">→</span></div></article></div></section>
+<section class="bg-black py-section text-white"><div class="mx-auto max-w-[1440px] px-edge"><div class="grid gap-12 lg:grid-cols-[.8fr_1.2fr]"><div class="reveal"><p class="text-[10px] uppercase tracking-[.35em] text-white/45">02 / Why home</p><h2 class="mt-4 max-w-md text-4xl font-medium tracking-[-.06em] sm:text-5xl md:text-6xl">Better than going to the shop.</h2></div><div class="why-feature-grid clean-grid"><article class="why-feature-item reveal"><div class="why-feature-content"><span class="why-feature-number">01</span><div class="why-feature-body"><h3 class="text-xl font-medium tracking-[-.03em]">I come to you</h3></div></div></article><article class="why-feature-item reveal"><div class="why-feature-content"><span class="why-feature-number">02</span><div class="why-feature-body"><h3 class="text-xl font-medium tracking-[-.03em]">European &amp; wavy hair</h3></div></div></article><article class="why-feature-item reveal"><div class="why-feature-content"><span class="why-feature-number">03</span><div class="why-feature-body"><h3 class="text-xl font-medium tracking-[-.03em]">Everything, clean</h3></div></div></article></div></div></div></section>
+<section class="mx-auto max-w-[1440px] px-edge py-section" id="services"><div class="mb-14 flex flex-col gap-5 md:flex-row md:items-end md:justify-between"><div class="reveal"><p class="text-[10px] uppercase tracking-[.35em] text-muted">03 / Services</p><h2 class="mt-4 text-4xl font-medium tracking-[-.06em] sm:text-5xl md:text-6xl">Simple prices.</h2></div></div><div class="services-grid-clean"><article class="service-item reveal"><div class="service-item-inner"><div class="service-item-media img-hover"><img alt="HOME HAIRCUT" class="aspect-[4/3] w-full object-cover" src="https://ian-the-barber.eliasgerbeth.com/img/service-haircut.jpg"/></div><div class="service-item-info"><div class="flex items-start justify-between gap-6"><span class="text-[10px] tracking-[.3em] text-muted">01</span><span class="text-xl font-medium">IDR 300k</span></div><h3 class="mt-7 text-xl font-medium tracking-[-.04em]">HOME HAIRCUT</h3><a class="line-link mt-5 inline-block text-[10px] uppercase tracking-[.25em]" data-booking="true" data-service="HOME HAIRCUT" href="https://wa.me/6283805877791">Book →</a></div></div></article><article class="service-item reveal"><div class="service-item-inner"><div class="service-item-media img-hover"><img alt="SKIN FADE" class="aspect-[4/3] w-full object-cover" src="https://ian-the-barber.eliasgerbeth.com/img/service-fade.jpg"/></div><div class="service-item-info"><div class="flex items-start justify-between gap-6"><span class="text-[10px] tracking-[.3em] text-muted">02</span><span class="text-xl font-medium">IDR 300k</span></div><h3 class="mt-7 text-xl font-medium tracking-[-.04em]">SKIN FADE</h3><a class="line-link mt-5 inline-block text-[10px] uppercase tracking-[.25em]" data-booking="true" data-service="SKIN FADE" href="https://wa.me/6283805877791">Book →</a></div></div></article><article class="service-item reveal"><div class="service-item-inner"><div class="service-item-media img-hover"><img alt="HAIRCUT &amp; BEARD TRIM" class="aspect-[4/3] w-full object-cover" src="https://ian-the-barber.eliasgerbeth.com/img/service-cutbeard.jpg"/></div><div class="service-item-info"><div class="flex items-start justify-between gap-6"><span class="text-[10px] tracking-[.3em] text-muted">03</span><span class="text-xl font-medium">IDR 400k</span></div><h3 class="mt-7 text-xl font-medium tracking-[-.04em]">HAIRCUT &amp; BEARD TRIM</h3><a class="line-link mt-5 inline-block text-[10px] uppercase tracking-[.25em]" data-booking="true" data-service="HAIRCUT &amp; BEARD TRIM" href="https://wa.me/6283805877791">Book →</a></div></div></article><article class="service-item reveal"><div class="service-item-inner"><div class="service-item-media img-hover"><img alt="BEARD TRIM &amp; LINE-UP" class="aspect-[4/3] w-full object-cover" src="https://ian-the-barber.eliasgerbeth.com/img/service-beardtrim.jpg"/></div><div class="service-item-info"><div class="flex items-start justify-between gap-6"><span class="text-[10px] tracking-[.3em] text-muted">04</span><span class="text-xl font-medium">IDR 150k</span></div><h3 class="mt-7 text-xl font-medium tracking-[-.04em]">BEARD TRIM &amp; LINE-UP</h3><a class="line-link mt-5 inline-block text-[10px] uppercase tracking-[.25em]" data-booking="true" data-service="BEARD TRIM &amp; LINE-UP" href="https://wa.me/6283805877791">Book →</a></div></div></article></div></section>
+<section class="bg-[#f2f2f0] py-section" id="about"><div class="mx-auto max-w-[1440px] px-edge"><div class="grid gap-10 lg:grid-cols-[1.1fr_.9fr] lg:items-center"><div class="img-hover reveal mx-auto w-full max-w-[430px] overflow-hidden bg-black"><img alt="Ian the Barber" class="aspect-[3/4] w-full object-cover object-top" src="https://ian-the-barber.eliasgerbeth.com/img/portrait.jpg"/></div><div class="reveal"><p class="text-[10px] uppercase tracking-[.35em] text-muted">04 / Your barber</p><h2 class="mt-4 text-4xl font-medium tracking-[-.06em] sm:text-5xl md:text-6xl">Meet Ian.</h2><p class="mt-7 max-w-xl text-[15px] leading-8 text-muted">Home barber for fades, scissor cuts and beards. I come to your villa with everything I need.</p><div class="mt-9 border-t border-black/10 pt-5 text-[10px] uppercase tracking-[.25em] text-muted">Ian · Home barber · Canggu, Bali</div></div></div></div></section>
+<section class="mx-auto max-w-[1440px] px-edge py-section"><div class="mb-14 reveal"><p class="text-[10px] uppercase tracking-[.35em] text-muted">05 / Reviews</p><h2 class="mt-4 text-4xl font-medium tracking-[-.06em] sm:text-5xl md:text-6xl">What Bali expats say.</h2></div><div class="reviews-grid-clean"><article class="review-item reveal"><div class="text-[11px] tracking-[.16em]">★★★★★</div><blockquote class="mt-5 text-sm leading-6 tracking-[-.01em]">“Thanks to Ian! Great experience! Really happy with the haircut. Fast, professional, and high quality.”</blockquote><p class="mt-5 text-[9px] uppercase tracking-[.22em] text-muted">Fresha client</p></article><article class="review-item reveal"><div class="text-[11px] tracking-[.16em]">★★★★★</div><blockquote class="mt-5 text-sm leading-6 tracking-[-.01em]">“Ian best barber in canggu”</blockquote><p class="mt-5 text-[9px] uppercase tracking-[.22em] text-muted">Fresha client</p></article><article class="review-item reveal"><div class="text-[11px] tracking-[.16em]">★★★★★</div><blockquote class="mt-5 text-sm leading-6 tracking-[-.01em]">“Great haircut with Ian. He totally understood the haircut I wanted.”</blockquote><p class="mt-5 text-[9px] uppercase tracking-[.22em] text-muted">Fresha client</p></article></div><div class="mt-8 text-center"><a class="line-link text-[10px] uppercase tracking-[.25em]" href="https://fresha.com/p/ian-social-6204375">See all reviews on Fresha ↗</a></div></section>
+<section class="bg-black py-section text-white"><div class="mx-auto max-w-[1440px] px-edge"><div class="grid gap-10 lg:grid-cols-[.8fr_1.2fr]"><div class="reveal"><p class="text-[10px] uppercase tracking-[.35em] text-white/45">06 / How it works</p><h2 class="mt-4 max-w-md text-4xl font-medium tracking-[-.06em] sm:text-5xl md:text-6xl">From a message to a fresh cut.</h2></div><div class="how-grid-clean"><article class="how-item reveal"><div class="flex gap-5"><span class="text-[10px] tracking-[.22em] text-white/35">01</span><div><h3 class="text-xl font-medium">Message me on WhatsApp</h3><p class="mt-2 text-xs leading-6 text-white/55">Tell me what you want and when. I usually reply the same day with a time.</p></div></div></article><article class="how-item reveal"><div class="flex gap-5"><span class="text-[10px] tracking-[.22em] text-white/35">02</span><div><h3 class="text-xl font-medium">We talk about the cut</h3><p class="mt-2 text-xs leading-6 text-white/55">A quick chat, in English. Send a photo if you have one, so I know exactly what you want.</p></div></div></article><article class="how-item reveal"><div class="flex gap-5"><span class="text-[10px] tracking-[.22em] text-white/35">03</span><div><h3 class="text-xl font-medium">I come with everything</h3><p class="mt-2 text-xs leading-6 text-white/55">Mirror, clippers, cape: I bring it all. You just need a chair and a power point.</p></div></div></article><article class="how-item reveal"><div class="flex gap-5"><span class="text-[10px] tracking-[.22em] text-white/35">04</span><div><h3 class="text-xl font-medium">Fresh cut, then I clean up</h3><p class="mt-2 text-xs leading-6 text-white/55">You get a good cut, I clean up every hair, and we can book your next visit before I go.</p></div></div></article></div></div></div></section>
+<section class="mx-auto max-w-[1440px] px-edge py-section"><div class="grid gap-10 lg:grid-cols-[.85fr_1.15fr] lg:items-center"><div class="reveal"><p class="text-[10px] uppercase tracking-[.35em] text-muted">07 / Regulars</p><h2 class="mt-4 text-4xl font-medium tracking-[-.06em] sm:text-5xl">The Monthly Membership.</h2><a class="mt-9 inline-flex items-center gap-3 border border-black bg-black px-7 py-4 text-[10px] font-semibold uppercase tracking-[.24em] text-white transition hover:bg-white hover:text-black" data-booking="true" href="https://wa.me/6283805877791">Ask me on WhatsApp →</a></div><div class="img-hover reveal overflow-hidden bg-black"><img alt="Monthly membership" class="aspect-[4/3] w-full object-cover" src="https://ian-the-barber.eliasgerbeth.com/img/ba-beard-after.jpg"/></div></div></section>
+<section class="bg-[#f2f2f0] py-section"><div class="mx-auto max-w-[1440px] px-edge"><div class="mb-12 reveal"><p class="text-[10px] uppercase tracking-[.35em] text-muted">08 / Before you book</p><h2 class="mt-4 max-w-4xl text-4xl font-medium tracking-[-.06em] sm:text-5xl md:text-6xl">Things worth checking<br/>with any home barber.</h2></div><div class="checks-grid-clean"><article class="check-item reveal"><p class="text-[10px] uppercase tracking-[.25em] text-muted">01</p><h3 class="mt-8 text-lg font-medium">Are the tools clean?</h3><p class="mt-3 text-xs leading-6 text-muted">Dirty clippers between clients aren't safe.</p><div class="mt-7 border-t border-black/10 pt-5"><p class="text-[10px] uppercase tracking-[.22em] text-muted">How I do it</p><p class="mt-2 text-sm leading-7">I clean everything before I come, and again in front of you. A fresh cape for every client.</p></div></article><article class="check-item reveal"><p class="text-[10px] uppercase tracking-[.25em] text-muted">02</p><h3 class="mt-8 text-lg font-medium">Can they cut my hair?</h3><p class="mt-3 text-xs leading-6 text-muted">Many barbers don't cut European or wavy hair much.</p><div class="mt-7 border-t border-black/10 pt-5"><p class="text-[10px] uppercase tracking-[.22em] text-muted">How I do it</p><p class="mt-2 text-sm leading-7">I cut European, wavy and thick hair every week. We agree the cut first, in English.</p></div></article><article class="check-item reveal"><p class="text-[10px] uppercase tracking-[.25em] text-muted">03</p><h3 class="mt-8 text-lg font-medium">Will they turn up on time?</h3><p class="mt-3 text-xs leading-6 text-muted">A late or no-show barber wastes your day.</p><div class="mt-7 border-t border-black/10 pt-5"><p class="text-[10px] uppercase tracking-[.22em] text-muted">How I do it</p><p class="mt-2 text-sm leading-7">I confirm on WhatsApp and message when I'm on my way.</p></div></article></div></div></section>
+<section class="bg-[#f2f2f0] py-section"><div class="mx-auto max-w-[1440px] px-edge"><div class="grid gap-10 lg:grid-cols-[.72fr_1.28fr] lg:items-center"><div class="reveal"><p class="text-[10px] uppercase tracking-[.35em] text-muted">09 / Service map</p><h2 class="mt-4 max-w-xl text-4xl font-medium tracking-[-.06em] sm:text-5xl md:text-6xl">I come to your villa.</h2><p class="mt-6 max-w-md text-sm leading-7 text-muted">Canggu and nearby areas. Send your villa pin on WhatsApp to confirm.</p><div class="map-area-stats"><div class="map-area-stat"><p class="text-[10px] uppercase tracking-[.25em] text-muted">Core area</p><p class="mt-2 text-sm">Canggu</p></div><div class="map-area-stat"><p class="text-[10px] uppercase tracking-[.25em] text-muted">Nearby</p><p class="mt-2 text-sm">Berawa · Pererenan</p></div></div><a class="wa mt-8 inline-flex items-center gap-3 rounded-full px-7 py-4 text-[10px] font-semibold uppercase tracking-[.23em]" data-booking="true" href="https://wa.me/6283805877791">Send villa location →</a></div><div class="reveal map-shell"><div class="map-float"><span class="map-float-dot"></span><div class="map-info"><strong>Canggu, Bali</strong><small>Ian’s home service area</small></div></div><button aria-label="Center map on Canggu" class="map-locate" type="button"><span>⌖</span></button><div aria-label="Map showing Canggu and nearby service areas" id="barber-map"></div></div></div></div></section>
+<section class="bg-black py-section text-white" id="contact"><div class="mx-auto max-w-[1440px] px-edge text-center"><p class="reveal text-[10px] uppercase tracking-[.38em] text-white/45">10 / Book a cut</p><h2 class="reveal mx-auto mt-5 max-w-4xl text-[clamp(3rem,8vw,7rem)] font-medium leading-[.92] tracking-[-.075em]">Ready for a fresh cut?</h2><p class="reveal mx-auto mt-7 max-w-lg text-sm leading-7 text-white/55">Message me and I’ll come to your villa.</p><a class="wa reveal mt-9 inline-flex items-center gap-3 rounded-full px-8 py-5 text-[11px] font-bold uppercase tracking-[.24em]" data-booking="true" href="https://wa.me/6283805877791">Message on WhatsApp →</a><p class="mt-5 text-[10px] uppercase tracking-[.24em] text-white/35">+62 838-0587-7791</p></div></section>
+</main>
+<footer class="bg-white"><div class="mx-auto max-w-[1440px] px-edge py-14"><div class="grid gap-10 border-b border-black/10 pb-10 md:grid-cols-[1.2fr_.8fr]"><div><p class="text-[1.25rem] font-semibold tracking-[-.05em]">IAN THE BARBER</p></div><div class="md:text-right"><p class="text-[10px] uppercase tracking-[.28em] text-muted">Book directly</p><a class="mt-3 inline-block text-sm" data-booking="true" href="https://wa.me/6283805877791">+62 838-0587-7791</a></div></div><div class="flex flex-col gap-3 pt-6 text-[10px] uppercase tracking-[.22em] text-muted sm:flex-row sm:items-center sm:justify-between"><span>© 2026 Ian the Barber</span><a class="line-link" href="https://fresha.com/p/ian-social-6204375">Fresha profile ↗</a></div></div></footer>
+<script>
+const translationsId = {"IAN THE BARBER": "IAN THE BARBER", "Work": "Karya", "Services": "Layanan", "About": "Tentang", "Contact": "Kontak", "WhatsApp": "WhatsApp", "Home barber · Canggu, Bali": "Barber panggilan · Canggu, Bali", "A fresh cut.": "Potongan rapi.", "I come to you.": "Saya datang ke tempat Anda.", "Home barber for fades, scissor cuts and beards — at your villa.": "Barber panggilan untuk fade, potongan gunting, dan janggut — langsung ke vila Anda.", "Book on WhatsApp →": "Booking via WhatsApp →", "★★★★★": "★★★★★", "5.0 on Fresha": "5.0 di Fresha", "Home barber": "Barber panggilan", "Canggu": "Canggu", "Berawa": "Berawa", "Pererenan": "Pererenan", "Fades": "Fade", "Scissor cuts": "Potongan gunting", "Beards": "Janggut", "01 / Recent work": "01 / Hasil potongan", "Cut clean.": "Potongan rapi.", "Keep it natural.": "Tetap natural.", "CLASSIC CUT": "POTONGAN KLASIK", "BEARD": "JANGGUT", "TEXTURED CROP": "TEXTURED CROP", "LONGER ON TOP": "BAGIAN ATAS LEBIH PANJANG", "FADE + BEARD": "FADE + JANGGUT", "02 / Why home": "02 / Kenapa barber panggilan", "Better than going to the shop.": "Lebih praktis daripada ke barbershop.", "I come to you": "Saya datang ke tempat Anda", "European & wavy hair": "Rambut Eropa & bergelombang", "Everything, clean": "Semua lengkap, bersih", "03 / Services": "03 / Layanan", "Simple prices.": "Harga simpel.", "HOME HAIRCUT": "POTONG RAMBUT", "Book →": "Booking →", "HAIRCUT & BEARD TRIM": "POTONG RAMBUT & RAPIKAN JANGGUT", "BEARD TRIM & LINE-UP": "RAPIKAN JANGGUT & LINE-UP", "04 / Your barber": "04 / Barber Anda", "Meet Ian.": "Kenalan dengan Ian.", "Home barber for fades, scissor cuts and beards. I come to your villa with everything I need.": "Barber panggilan untuk fade, potongan gunting, dan janggut. Saya datang ke vila Anda dengan semua perlengkapan.", "Ian · Home barber · Canggu, Bali": "Ian · Barber panggilan · Canggu, Bali", "05 / Reviews": "05 / Ulasan", "What Bali expats say.": "Kata para ekspat di Bali.", "“Thanks to Ian! Great experience! Really happy with the haircut. Fast, professional, and high quality.”": "“Terima kasih, Ian! Pengalamannya bagus. Saya sangat puas dengan potongannya. Cepat, profesional, dan berkualitas.”", "Fresha client": "Klien Fresha", "“Ian best barber in canggu”": "“Ian barber terbaik di Canggu”", "“Great haircut with Ian. He totally understood the haircut I wanted.”": "“Potongannya bagus banget. Ian benar-benar paham model yang saya mau.”", "See all reviews on Fresha ↗": "Lihat semua ulasan di Fresha ↗", "06 / How it works": "06 / Cara kerja", "From a message to a fresh cut.": "Dari chat sampai potongan baru.", "Message me on WhatsApp": "Chat saya di WhatsApp", "Tell me what you want and when. I usually reply the same day with a time.": "Beri tahu model dan waktunya. Biasanya saya membalas di hari yang sama dengan pilihan waktu.", "We talk about the cut": "Kita bahas model rambut", "A quick chat, in English. Send a photo if you have one, so I know exactly what you want.": "Chat singkat, bisa dalam bahasa Inggris. Kirim foto jika ada agar saya tahu model yang Anda inginkan.", "I come with everything": "Saya bawa semuanya", "Mirror, clippers, cape: I bring it all. You just need a chair and a power point.": "Cermin, clipper, cape: semua saya bawa. Anda hanya perlu kursi dan stopkontak listrik.", "Fresh cut, then I clean up": "Potongan selesai, saya bersihkan", "You get a good cut, I clean up every hair, and we can book your next visit before I go.": "Selesai dipotong, saya bersihkan semua rambut dan kita bisa atur jadwal berikutnya sebelum saya pergi.", "07 / Regulars": "07 / Pelanggan rutin", "The Monthly Membership.": "Membership bulanan.", "Ask me on WhatsApp →": "Tanya via WhatsApp →", "08 / Before you book": "08 / Sebelum booking", "Things worth checking": "Hal yang perlu diperiksa", "with any home barber.": "sebelum memilih barber panggilan.", "Are the tools clean?": "Alatnya bersih?", "Dirty clippers between clients aren't safe.": "Clipper kotor antar klien itu tidak aman.", "How I do it": "Cara saya", "I clean everything before I come, and again in front of you. A fresh cape for every client.": "Semua perlengkapan saya bersihkan sebelum datang, lalu saya bersihkan lagi di depan Anda. Cape baru untuk setiap klien.", "Can they cut my hair?": "Bisa memotong rambut seperti yang saya mau?", "Many barbers don't cut European or wavy hair much.": "Tidak semua barber terbiasa dengan rambut Eropa atau bergelombang.", "I cut European, wavy and thick hair every week. We agree the cut first, in English.": "Saya memotong rambut Eropa, bergelombang, dan tebal setiap minggu. Kita sepakati modelnya terlebih dahulu.", "Will they turn up on time?": "Apakah datang tepat waktu?", "A late or no-show barber wastes your day.": "Barber yang terlambat atau tidak datang hanya membuang waktu Anda.", "I confirm on WhatsApp and message when I'm on my way.": "Saya konfirmasi lewat WhatsApp dan mengabari saat berangkat.", "09 / Service map": "09 / Area layanan", "I come to your villa.": "Saya datang ke vila Anda.", "Canggu and nearby areas. Send your villa pin on WhatsApp to confirm.": "Canggu dan area sekitar. Kirim pin vila lewat WhatsApp untuk konfirmasi.", "Core area": "Area utama", "Nearby": "Sekitar", "Berawa · Pererenan": "Berawa · Pererenan", "Send villa location →": "Kirim lokasi vila →", "Canggu, Bali": "Canggu, Bali", "Ian’s home service area": "Area layanan Ian", "10 / Book a cut": "10 / Booking", "Ready for a fresh cut?": "Siap untuk potongan baru?", "Message me and I’ll come to your villa.": "Chat saya, lalu saya datang ke vila Anda.", "Message on WhatsApp →": "Chat di WhatsApp →", "Book directly": "Booking langsung", "Fresha profile ↗": "Profil Fresha ↗", "BOOKING": "BOOKING", "What would you like to book?": "Mau booking yang mana?", "Choose a service to continue to WhatsApp.": "Pilih layanan untuk lanjut ke WhatsApp.", "Your selected service will be added to the WhatsApp message.": "Layanan yang dipilih akan otomatis dimasukkan ke pesan WhatsApp.", "Continue to WhatsApp →": "Lanjut ke WhatsApp →", "Close": "Tutup", "SKIN FADE": "SKIN FADE"};
+const enMeta = {title:'Ian the Barber — Home Barber in Canggu, Bali',description:'Home barber in Canggu, Bali. Ian comes to your villa for fades, scissor cuts and beard trims.',lang:'en'};
+const idMeta = {title:'Ian the Barber — Barber Panggilan di Canggu, Bali',description:'Barber panggilan di Canggu, Bali. Ian datang ke vila untuk fade, potong rambut, dan rapikan janggut.',lang:'id'};
+const bodyTextNodes = [];
+const originalText = new Map();
+const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+let textNode;
+while ((textNode = walker.nextNode())) {
+  if (textNode.parentElement && textNode.parentElement.closest('.lang-switch')) continue;
+  bodyTextNodes.push(textNode);
+  originalText.set(textNode, textNode.nodeValue);
+}
+const preserveSpace = (value, next) => {
+  const m = value.match(/^(\s*)([\s\S]*?)(\s*)$/);
+  return m[1] + next + m[3];
+};
+function setLanguage(lang) {
+  const dict = lang === 'id' ? translationsId : null;
+  bodyTextNodes.forEach(node => {
+    const original = originalText.get(node) || '';
+    const trimmed = original.trim();
+    if (!trimmed) return;
+    const translated = dict && Object.prototype.hasOwnProperty.call(dict, trimmed) ? dict[trimmed] : trimmed;
+    node.nodeValue = preserveSpace(original, translated);
+  });
+  const meta = lang === 'id' ? idMeta : enMeta;
+  document.documentElement.lang = meta.lang;
+  document.title = meta.title;
+  const description = document.querySelector('meta[name="description"]');
+  if (description) description.setAttribute('content', meta.description);
+  document.querySelectorAll('[data-lang-btn]').forEach(btn => {
+    const active = btn.dataset.langBtn === lang;
+    btn.setAttribute('aria-pressed', String(active));
+  });
+  document.querySelector('.map-locate')?.setAttribute('aria-label', lang === 'id' ? 'Pusatkan peta di Canggu' : 'Center map on Canggu');
+  document.getElementById('barber-map')?.setAttribute('aria-label', lang === 'id' ? 'Peta Canggu dan area layanan sekitar' : 'Map showing Canggu and nearby service areas');
+  document.querySelector('[data-booking-close]')?.setAttribute('aria-label', lang === 'id' ? 'Tutup' : 'Close');
+  document.querySelector('.booking-options')?.setAttribute('aria-label', lang === 'id' ? 'Layanan' : 'Services');
+  try { localStorage.setItem('ian-lang', lang); } catch (e) {}
+}
+document.querySelectorAll('[data-lang-btn]').forEach(btn => {
+  btn.addEventListener('click', () => setLanguage(btn.dataset.langBtn));
+});
+let savedLang = 'en';
+try { savedLang = localStorage.getItem('ian-lang') === 'id' ? 'id' : 'en'; } catch (e) {}
+setLanguage(savedLang);
+
+const nav = document.getElementById('top-nav');
+const observer = new IntersectionObserver((entries)=>entries.forEach(entry=>{
+  if(entry.isIntersecting){entry.target.classList.add('visible');observer.unobserve(entry.target)}
+}),{threshold:.08,rootMargin:'0px 0px -60px 0px'});
+document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+
+let lastScrollY = window.scrollY;
+let ticking = false;
+const updateHeader = () => {
+  const y = Math.max(0, window.scrollY);
+  nav.classList.toggle('nav-scrolled', y > 18);
+  if (y <= 18) {
+    nav.classList.remove('nav-hidden');
+  } else if (y > lastScrollY + 6) {
+    nav.classList.add('nav-hidden');
+  } else if (y < lastScrollY - 6) {
+    nav.classList.remove('nav-hidden');
+  }
+  lastScrollY = y;
+  ticking = false;
+};
+window.addEventListener('scroll',()=>{
+  if(!ticking){window.requestAnimationFrame(updateHeader);ticking=true;}
+},{passive:true});
+updateHeader();
+
+// Keep every visual slot occupied even when a demo/remote image is unavailable.
+const markMediaEmpty = (img) => {
+  img.style.visibility = 'hidden';
+  const frame = img.closest('.img-hover, [class*="aspect-4\/5"], [class*="aspect-4\/3"], .media-frame');
+  if (frame) frame.classList.add('media-empty');
+};
+document.querySelectorAll('img').forEach((img) => {
+  img.addEventListener('error', () => markMediaEmpty(img), {once:true});
+  if (img.complete && img.naturalWidth === 0) markMediaEmpty(img);
+});
+
+
+const bookingModal = document.getElementById('booking-modal');
+const bookingContinue = bookingModal?.querySelector('[data-booking-continue]');
+const bookingOptions = bookingModal ? Array.from(bookingModal.querySelectorAll('[data-booking-option]')) : [];
+let selectedBookingService = null;
+let lastBookingTrigger = null;
+const bookingServices = {
+  'HOME HAIRCUT': {en:'Home Haircut', id:'Potong Rambut'},
+  'SKIN FADE': {en:'Skin Fade', id:'Skin Fade'},
+  'HAIRCUT & BEARD TRIM': {en:'Haircut & Beard Trim', id:'Potong Rambut & Rapikan Janggut'},
+  'BEARD TRIM & LINE-UP': {en:'Beard Trim & Line-up', id:'Rapikan Janggut & Line-up'}
+};
+const selectBookingService = (key) => {
+  selectedBookingService = bookingServices[key] ? key : null;
+  bookingOptions.forEach(option => {
+    const active = option.dataset.bookingOption === selectedBookingService;
+    option.classList.toggle('is-selected', active);
+    option.setAttribute('aria-selected', String(active));
+  });
+  if (bookingContinue) bookingContinue.disabled = !selectedBookingService;
+};
+const openBookingModal = (preselected = null, trigger = null) => {
+  if (!bookingModal) return;
+  lastBookingTrigger = trigger || document.activeElement;
+  selectBookingService(preselected);
+  bookingModal.classList.add('is-open');
+  bookingModal.setAttribute('aria-hidden','false');
+  document.documentElement.style.overflow = 'hidden';
+  bookingModal.querySelector('.booking-close')?.focus();
+};
+const closeBookingModal = () => {
+  if (!bookingModal) return;
+  bookingModal.classList.remove('is-open');
+  bookingModal.setAttribute('aria-hidden','true');
+  document.documentElement.style.overflow = '';
+  if (lastBookingTrigger && typeof lastBookingTrigger.focus === 'function') lastBookingTrigger.focus();
+  lastBookingTrigger = null;
+};
+document.querySelectorAll('[data-booking="true"]').forEach(link => {
+  link.addEventListener('click', (event) => {
+    event.preventDefault();
+    openBookingModal(link.dataset.service || null, link);
+  });
+});
+bookingOptions.forEach(option => option.addEventListener('click', () => selectBookingService(option.dataset.bookingOption)));
+bookingModal?.querySelector('[data-booking-close]')?.addEventListener('click', closeBookingModal);
+bookingModal?.addEventListener('click', (event) => {
+  if (event.target === bookingModal) closeBookingModal();
+});
+document.addEventListener('keydown', (event) => {
+  if (!bookingModal?.classList.contains('is-open')) return;
+  if (event.key === 'Escape') closeBookingModal();
+});
+bookingContinue?.addEventListener('click', () => {
+  if (!selectedBookingService) return;
+  const lang = document.documentElement.lang === 'id' ? 'id' : 'en';
+  const service = bookingServices[selectedBookingService][lang];
+  const message = lang === 'id'
+    ? `Halo Ian, saya mau booking: ${service}. Bisa info jadwal yang tersedia?`
+    : `Hi Ian, I'd like to book: ${service}. Could you let me know your availability?`;
+  const url = `https://wa.me/6283805877791?text=${encodeURIComponent(message)}`;
+  closeBookingModal();
+  window.location.href = url;
+});
+
+const map = L.map('barber-map',{zoomControl:false,scrollWheelZoom:false,dragging:true}).setView([-8.6478,115.1385],13);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap'}).addTo(map);
+L.control.zoom({position:'bottomright'}).addTo(map);
+const pinIcon=L.divIcon({className:'',html:'<div class="map-pin"></div>',iconSize:[18,18],iconAnchor:[9,18]});
+const spots=[[-8.6478,115.1385,'Canggu'],[-8.6591,115.1458,'Berawa'],[-8.6547,115.1237,'Batu Bolong'],[-8.6468,115.1157,'Pererenan'],[-8.6621,115.1633,'Seminyak']];
+spots.forEach(([lat,lng,name],i)=>L.marker([lat,lng],{icon:pinIcon}).addTo(map).bindTooltip(name,{permanent:i===0,direction:'top',offset:[0,-10],className:'barber-tooltip'}));
+document.querySelector('.map-locate').addEventListener('click',()=>map.flyTo([-8.6478,115.1385],13,{duration:.7}));
+</script>
+<div aria-hidden="true" class="booking-modal" id="booking-modal">
+<div aria-labelledby="booking-title" aria-modal="true" class="booking-card" role="dialog">
+<div class="booking-head">
+<div>
+<p class="booking-kicker">BOOKING</p>
+<h2 class="booking-title" id="booking-title">What would you like to book?</h2>
+</div>
+<button aria-label="Close" class="booking-close" data-booking-close="" type="button">×</button>
+</div>
+<p class="booking-sub">Choose a service to continue to WhatsApp.</p>
+<div aria-label="Services" class="booking-options" role="listbox">
+<button aria-selected="false" class="booking-option" data-booking-option="HOME HAIRCUT" role="option" type="button">
+<span class="booking-option-body"><span class="booking-option-name">HOME HAIRCUT</span><span class="booking-option-price">IDR 300k</span></span>
+<span aria-hidden="true" class="booking-option-check">✓</span>
+</button>
+<button aria-selected="false" class="booking-option" data-booking-option="SKIN FADE" role="option" type="button">
+<span class="booking-option-body"><span class="booking-option-name">SKIN FADE</span><span class="booking-option-price">IDR 300k</span></span>
+<span aria-hidden="true" class="booking-option-check">✓</span>
+</button>
+<button aria-selected="false" class="booking-option" data-booking-option="HAIRCUT &amp; BEARD TRIM" role="option" type="button">
+<span class="booking-option-body"><span class="booking-option-name">HAIRCUT &amp; BEARD TRIM</span><span class="booking-option-price">IDR 400k</span></span>
+<span aria-hidden="true" class="booking-option-check">✓</span>
+</button>
+<button aria-selected="false" class="booking-option" data-booking-option="BEARD TRIM &amp; LINE-UP" role="option" type="button">
+<span class="booking-option-body"><span class="booking-option-name">BEARD TRIM &amp; LINE-UP</span><span class="booking-option-price">IDR 150k</span></span>
+<span aria-hidden="true" class="booking-option-check">✓</span>
+</button>
+</div>
+<div class="booking-foot">
+<p class="booking-note">Your selected service will be added to the WhatsApp message.</p>
+<button class="booking-continue" data-booking-continue="" disabled="" type="button">Continue to WhatsApp →</button>
+</div>
+</div>
+</div>
+</body></html>
